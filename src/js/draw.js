@@ -45,9 +45,9 @@ class Draw {
     this.textareaEl = null;
     this.measureEl = null;
     // cache
-    this.historyImage = new Image(); // 撤销时用到
-    this.undoQueue = []; // 撤回队列
-    this.redoQueue = []; // 重做队列
+    this.historyImage = new Image(); // used when canceling
+    this.undoQueue = []; // withdraw queue
+    this.redoQueue = []; // redo queue
     this.firstDraw = null;
     // event emitter
     this.evt = new Eve();
@@ -99,12 +99,12 @@ class Draw {
     this.image.src = this.canvas.toDataURL("image/png");
     this.redoQueue.length = 0
     const { clientX, clientY } = event;
-    // 鼠标按下时, canvas的初始坐标 (会随着move而变)
+    // When the mouse is pressed, the initial coordinates of the canvas (will change with the move)
     const { x, y } = windowToCanvas(this.canvas, this.canvas_style, clientX, clientY);
     this.originX = x;
     this.originY = y;
 
-    // 记录初始按下的坐标
+    // record the coordinates of the initial press
     this.ft_originX = this.originX;
     this.ft_originY = this.originY;
 
@@ -126,22 +126,22 @@ class Draw {
     if (this.isDrawing) {
       const { clientX, clientY } = event;
 
-      // 鼠标移动时, canvas中的实时坐标
+      // When the mouse moves, the real-time coordinates in the canvas
       const { x, y } = windowToCanvas(this.canvas, this.canvas_style, clientX, clientY);
-      // 默认是鼠标刚按下的坐标.
+      // The default is the coordinates of the mouse just pressed.
       let newOriginX = this.originX,
         newOriginY = this.originY;
 
-      // 计算 横/纵 坐标到初始点的距离
+      // Calculate the distance from the horizontal/vertical coordinates to the initial point
       let distanceX = Math.abs(x - this.originX);
       let distanceY = Math.abs(y - this.originY);
 
-      // 让形状左上角的坐标永远大于右下角的坐标, 保证图形能正确绘制
+      //Let the coordinates of the upper left corner of the shape always be greater than the coordinates of the lower right corner to ensure that the graphics can be drawn correctly
       if (x < this.originX) newOriginX = x;
       if (y < this.originY) newOriginY = y;
 
-      // (x, y) 为画布中的实时坐标. (originX / Y) 是鼠标点击时在画布上的坐标
-      // (newOriginX / Y) 绘制形状(比如矩形)时, 左上角的坐标
+      // (x, y) is the real-time coordinates in the canvas. (originX / Y) are the coordinates on the canvas when the mouse is clicked
+      // (newOriginX / Y) When drawing a shape (such as a rectangle), the coordinates of the upper left corner
       const mousePosition = {
         x,
         y,
@@ -164,11 +164,12 @@ class Draw {
     }
   }
 
-  // 在绘制形状的过程中需要重新绘制，否则会画出移动过程中的图像
+
+  // In the process of drawing the shape, it needs to be redrawn, otherwise the image in the moving process will be drawn
   reDraw() {
     this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     this.context.drawImage(this.image, 0, 0);
-    console.log("Image Redraw");
+    console.log("redraw function written by sahil");
     this.context.beginPath();
   }
 
@@ -233,9 +234,9 @@ class Draw {
       circle: (mousePosition) => {
         const { newOriginX, newOriginY, distanceX, distanceY } = mousePosition;
         this.reDraw();
-        // 根据狗股定理算出半径
+        // Calculate the radius according to the dog-strand theorem
         const r = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-        // 确保鼠标在圆心位置(虽然只能保证左边)
+        // Make sure the mouse is in the center of the circle (although only to the left)
         this.context.arc(
           newOriginX + distanceX,
           newOriginY + distanceY,
@@ -342,7 +343,7 @@ class Draw {
     Dom.addClass(this.textareaEl, "__edb-textarea");
     Dom.appendChild(this.boxDom, this.textareaEl);
     Dom.appendChild(this.container, this.boxDom);
-    // 如果没有进任务队列的话, mac Safari下会直接触发onblur导致整个dom消失
+    // If it does not enter the task queue, onblur will be triggered directly under mac Safari, causing the entire dom to disappear
     setTimeout(() => {
       this.textareaEl.focus();
       this.textareaEl.onblur = () => {
@@ -418,7 +419,7 @@ class Draw {
   undo() {
     let len = this.undoQueue.length
     if (len === 0) {return}
-    else if (len === 1) { // 初始那笔
+    else if (len === 1) { //  initial stroke
       if (this.firstDraw) {
         this.historyImage.src = this.firstDraw
       } else {
@@ -427,7 +428,7 @@ class Draw {
         return
       }
     } else {
-      this.historyImage.src = this.undoQueue[len - 2]; // 注意. 减1的话是最新那一步,等于重画, 这里要减2才是我们需要的
+      this.historyImage.src = this.undoQueue[len - 2]; // Note. If you subtract 1, it is the latest step, which is equivalent to redrawing. We need to subtract 2 here.
     } 
     this.historyImage.onload = () => {
       this.clear(false);
