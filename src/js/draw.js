@@ -171,11 +171,14 @@ class Draw {
   // In the process of drawing the shape, it needs to be redrawn, otherwise the image in the moving process will be drawn
   reDraw() {
     this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-    this.image.onload = () => {
+
+      //   this.image.onload = () => {
+  //  console.log(this.image);
     this.context.drawImage(this.image, 0, 0);
-    }
-  //  console.log("redraw function written by sahil");
+       //  }
+       //  console.log("redraw function written by sahil");
     this.context.beginPath();
+
   }
 
   endOfDrawing(event) {
