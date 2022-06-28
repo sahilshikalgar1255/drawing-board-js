@@ -15,7 +15,8 @@ class Draw {
       textLineHeight = 20,
       textColor = "#f00",
       textareaPlaceholder = detectLanguage(),
-      ratio = window.devicePixelRatio || 1
+      ratio = window.devicePixelRatio || 1,
+      fontFamily="Arial"
     } = options;
     if (!container) throw Error("No container element were found...");
     this.configuration = {
@@ -30,6 +31,7 @@ class Draw {
       textColor,
       canvasBgColor,
       textareaPlaceholder,
+      fontFamily
     };
     this.container = this.createCanvasOuterBox(container);
     this.canvas = this.createCanvasEl(this.container, this);
@@ -97,6 +99,7 @@ class Draw {
   mouseDown(event) {
     this.isDrawing = true;
     this.image.src = this.canvas.toDataURL("image/png");
+    this.image.crossOrigin = "anonymous";
     this.redoQueue.length = 0
     const { clientX, clientY } = event;
     // When the mouse is pressed, the initial coordinates of the canvas (will change with the move)
@@ -291,6 +294,7 @@ class Draw {
         fontSize: `${this.configuration.textFontSize}px`,
         lineHeight: `${this.configuration.textLineHeight}px`,
         color: this.configuration.textColor,
+        fontFamily: this.configuration.fontFamily,
       },
     });
     Dom.addClass(this.measureEl, "__edb-text-pre");
@@ -298,7 +302,8 @@ class Draw {
   }
 
   drawText(ctx, options) {
-    options.font = options.font || '"PingFang SC","Microsoft YaHei","微软雅黑"';
+  //  options.font = options.fontFamily || '"PingFang SC","Microsoft YaHei","微软雅黑"';
+    options.font = options.fontFamily;
     let string = options.text;
     ctx.save();
     ctx.textBaseline = "middle";
@@ -354,6 +359,7 @@ class Draw {
           textFontSize: this.configuration.textFontSize,
           textLineHeight: this.configuration.textLineHeight,
           position,
+          fontFamily: this.configuration.fontFamily,
         });
         Dom.removeChild(this.container, this.boxDom);
         this.boxDom = null;
@@ -392,6 +398,7 @@ class Draw {
       case 'textFontSize':
       case 'textColor':
       case 'textLineHeight':
+      case 'fontFamily':
         this.createTextMeasure();
         break  
     }

@@ -1,7 +1,9 @@
 {
   "name": "drawing-board-js",
   "version": "0.1.0",
+  "description": "Make drawing easy with drawing-board-js.",
   "private": true,
+  "main": "./dist/drawing-board-js.esm.js",
   "dependencies": {
     "@babel/cli": "^7.17.10",
     "@babel/core": "^7.18.5",
@@ -29,6 +31,20 @@
     "build": "rollup -c",
     "dev": "rollup -c -w"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sahilshikalgar1255/drawing-board-js.git"
+  },
+  "keywords": [
+    "canvas",
+    "canvas-drawing",
+    "drawing-board-js",
+    "canvas-drawing-js",
+    "drawing-board",
+    "paint-app"
+  ],
+  "author": "SahilShikalgar",
+  "license": "MIT",
   "eslintConfig": {
     "extends": [
       "react-app",
